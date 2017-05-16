@@ -1,0 +1,23 @@
+# -*- mode: python -*-
+
+# Inherit the environment from my parent.
+Import('env')
+
+# Make a copy of the environment, so my changes are limited in this directory and sub-directories.
+env = env.Clone()
+
+common_cpps = env.aDirs('common')
+job_cpps = env.aDirs('job')
+message_cpps = env.aDirs('message')
+async_cpps = env.aDirs('async')
+timer_cpps = env.aDirs('timer')
+manager_cpps = env.aDirs('manager')
+cpps = [common_cpps, job_cpps, message_cpps, async_cpps, timer_cpps, manager_cpps]
+
+target = env.aSharedLibraryAndInstall(target = 'kirin',
+                                      source = cpps,
+                                      LIBS = [],
+                                      )
+
+
+

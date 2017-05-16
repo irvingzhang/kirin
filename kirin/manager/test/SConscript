@@ -1,0 +1,19 @@
+# -*- mode: python -*-
+
+# Inherit the environment from my parent.
+Import('env')
+
+# Make a copy of the environment, so my changes are limited in this directory and sub-directories.
+env = env.Clone()
+
+test_sources = [
+            '#kirin/test/dotest.cpp',
+            'work_manager_test.cpp',
+        ]
+
+env.Prepend(LIBS = ['cppunit'])
+
+env.aTest(target = 'kirin_manager_test',
+               source = test_sources,
+               LIBS = env['test_libs'],
+              )

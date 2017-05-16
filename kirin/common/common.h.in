@@ -1,0 +1,35 @@
+#ifndef KIRIN_COMMON_H
+#define KIRIN_COMMON_H
+
+#include <cstddef>
+
+#define BEGIN_KIRIN_NS(x) namespace kirin { namespace x {
+#define END_KIRIN_NS(x) } }
+#define USE_KIRIN_NS(x) using namespace kirin::x
+
+#include <string>
+namespace kirin {
+const std::string VERSION("@VERSION@");
+
+#define KIRIN_DELETE_AND_SET_NULL(ptr)     \
+    if (ptr != NULL)  {                         \
+        delete ptr;                             \
+        ptr = NULL;                             \
+    }
+} // end namespace kirin
+
+#define likely(x)                   __builtin_expect(!!(x), 1)
+#define unlikely(x)                 __builtin_expect(!!(x), 0)
+
+#define MAX_WORKER_THREADS 512
+
+enum thread_type {
+    TT_CPU,
+    TT_NETWORK,
+    TT_DISK,
+};
+
+#ifndef CONTAIN_RECORD
+#define CONTAIN_RECORD(address, type, field) (reinterpret_cast<type*>((char*)(address) - offsetof(type, field)))
+#endif
+#endif //KIRIN_COMMON_H
