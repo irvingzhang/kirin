@@ -3,7 +3,6 @@
 
 #include <list>
 #include <algorithm>
-#include "kirin/common/common.h"
 #include "kirin/common/lock.h"
 
 BEGIN_KIRIN_NS(job);

@@ -1,8 +1,6 @@
 #include <sys/syscall.h>
 #include "kirin/async/async.h"
-#include "kirin/common/common.h"
 #include "kirin/common/atomic_op.h"
-#include "kirin/common/singleton.h"
 #include "kirin/manager/work_manager.h"
 
 BEGIN_KIRIN_NS(async);

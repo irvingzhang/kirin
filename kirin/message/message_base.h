@@ -1,7 +1,6 @@
 #ifndef KIRIN_MESSAGE_MESSAGE_BASE_H
 #define KIRIN_MESSAGE_MESSAGE_BASE_H
 
-#include "kirin/common/common.h"
 #include "kirin/message/serializable.h"
 
 BEGIN_KIRIN_NS(message);

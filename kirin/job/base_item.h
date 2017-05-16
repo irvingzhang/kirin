@@ -1,7 +1,6 @@
 #ifndef KIRIN_JOB_BASE_ITEM_H
 #define KIRIN_JOB_BASE_ITEM_H
 
-#include "kirin/common/common.h"
 #include "kirin/common/identifiable.h"
 #include "kirin/job/task_queue.h"
 

@@ -1,7 +1,6 @@
 #ifndef KIRIN_MESSAGE_INTERNAL_MESSAGE_H
 #define KIRIN_MESSAGE_INTERNAL_MESSAGE_H
 
-#include "kirin/common/common.h"
 #include "kirin/message/message_base.h"
 #include "kirin/message/serialize_util.h"
 #include "kirin/message/deserialize_util.h"

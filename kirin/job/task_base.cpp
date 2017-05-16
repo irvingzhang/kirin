@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <sys/syscall.h>
-#include <typeinfo>
 #include <assert.h>
 #include <iostream>
 #include "kirin/job/task_base.h"

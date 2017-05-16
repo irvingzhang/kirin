@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include "kirin/common/ref_counter.h"
-#include "kirin/common/common.h"
 
 BEGIN_KIRIN_NS(job);
 

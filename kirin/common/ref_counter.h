@@ -1,7 +1,6 @@
 #ifndef KIRIN_COMMON_REF_COUNTER_H
 #define KIRIN_COMMON_REF_COUNTER_H
 
-#include "kirin/common/common.h"
 #include "kirin/common/atomic_op.h"
 
 BEGIN_KIRIN_NS(common);
