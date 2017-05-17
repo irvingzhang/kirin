@@ -2,7 +2,6 @@
 #include "kirin/timer/timer.h"
 #include "kirin/async/async.h"
 #include "kirin/timer/test/timer_service_test.h"
-#include "kirin/manager/work_manager.h"
 
 BEGIN_KIRIN_NS(timer);
 CPPUNIT_TEST_SUITE_REGISTRATION(timer_service_test);

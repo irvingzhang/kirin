@@ -16,16 +16,6 @@ uint64_t g_last_tick = 0, g_cycle_start = 0, g_cycle_in_tick = 1;
 timer_service::timer_service(): m_running(false),
                                 m_efd(-1) {
     m_timer_map.clear();
-/*    m_efd = ::epoll_create(16);
-    
-    struct lambda {
-        static void run(void* p_service) {
-            std::cout << "timer_service thread started: " << syscall(SYS_gettid) << std::endl;
-            static_cast<timer_service*>(p_service)->run_timer();
-        }
-    };
-
-    m_thread.create(new job::task(&lambda::run, this)); */
 }
 
 void timer_service::start() {
