@@ -1,13 +1,44 @@
 #include <sched.h>
 #include <iostream>
 #include <assert.h>
+#include <sys/syscall.h>
 #include "kirin/job/thread_pool.h"
 #include "kirin/common/atomic_op.h"
 #include "kirin/common/memory_op.h"
 #include "kirin/common/cast.h"
-#include "kirin/job/task_base.h"
 
 BEGIN_KIRIN_NS(job);
+
+void thread_pool::thread_run(void* arg) {
+    work_ctx* p_ctx = static_cast<work_ctx*>(arg);
+    job_queue* jobq = p_ctx->jobq;
+    assert(jobq != NULL);
+
+    p_ctx->thread_id = syscall(SYS_gettid);
+    std::cout << "thread start running: " << p_ctx->thread_id << std::endl;
+    while (true) {
+        item_base* item = NULL;
+        if (!jobq->consume(item)) break;
+        assert(item != NULL);
+
+        if (is_instance_of<control_work_item>(item)) {
+            control_work_item* control_item_ptr = down_cast<control_work_item*>(item);
+
+            if (!control_item_ptr->pfunc(control_item_ptr, p_ctx)) break;
+        } else if (is_instance_of<termination_work_item>(item)) {
+            termination_work_item* termination_item_ptr = down_cast<termination_work_item*>(item);
+
+            if (!termination_item_ptr->pfunc(termination_item_ptr, p_ctx)) break;
+        } else {
+            work_item* item_ptr = down_cast<work_item*>(item);
+            if (item_ptr->pfunc != NULL) {
+                p_ctx->is_running = true;
+                item_ptr->pfunc(item_ptr);
+                p_ctx->is_running = false;
+            }
+        }
+    }
+}
 
 bool work_ctx_comparator(work_ctx* ctx1, work_ctx* ctx2) {
     return ctx1->jobq->size() < ctx2->jobq->size();
@@ -118,7 +149,7 @@ size_t thread_pool::add_worker(const size_t workers) {
             assert(m_ctxs[m_workers]->jobq != NULL);
         }
 
-        if (m_threads.create(m_ctxs[m_workers])) ++m_workers;
+        if (m_threads.create(new task(&thread_run, m_ctxs[m_workers]))) ++m_workers;
     }
 
     return actual_added;

@@ -10,7 +10,7 @@ BEGIN_KIRIN_NS(message);
 struct internal_action {
     enum {
         KIRIN_IA_READ = 1,
-        KIRIN_IA_WRITE,
+        KIRIN_IA_WRITE = 2,
     };
 
     static std::string action2str(int action) {

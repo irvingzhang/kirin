@@ -5,6 +5,8 @@
 
 BEGIN_KIRIN_NS(job);
 
+typedef void (*task_func)(void*);
+
 class task_base {
 public:
     virtual ~task_base() {}
@@ -14,13 +16,17 @@ public:
 
 class task: public task_base {
 public:
-    explicit task(void* arg):
+    task(task_func func, void* arg):
+            m_func(func),
             m_arg(arg) {}
     virtual ~task() {}
 
-    virtual void run(); 
+    virtual void run() {
+        m_func(m_arg);
+    }
 
 protected:
+    task_func m_func;
     void* m_arg;
 };
 

@@ -26,6 +26,7 @@ private:
     size_t add_worker(const size_t workers);
     size_t del_worker(const size_t workers, bool is_final_stop = false);
 
+    static void thread_run(void* arg);
     static bool terminate_func(item_base* item, work_ctx* p_ctx);
     static void dummy(item_base* item_ptr);
 

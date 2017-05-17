@@ -12,10 +12,9 @@ void* thread::thread_run(void* ptr) {
     return NULL;
 }
 
-bool thread::create(void* p_arg) {
-    pthread_t ptid;
-    task* tsk = new task(p_arg);
+bool thread::create(task* tsk) {
     assert(tsk != NULL);
+    pthread_t ptid;
 
     if (::pthread_create(&ptid, NULL,
                     thread_run, tsk) != 0) {
@@ -27,10 +26,10 @@ bool thread::create(void* p_arg) {
     return true;
 }
 
-size_t thread::batch_create(void* p_arg, size_t num) {
+size_t thread::batch_create(task* tsk, size_t num) {
     size_t index = 0;
     for (; index < num; ++index) {
-        if (!this->create(p_arg)) break;
+        if (!this->create(tsk)) break;
     }
 
     return index;

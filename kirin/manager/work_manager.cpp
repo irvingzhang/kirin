@@ -66,7 +66,7 @@ void work_manager::stop(bool wait_pool_stop) {
 }
 
 bool work_manager::is_running() {
-    return ATOMIC_GET(&m_current_jobs) >= 0;
+    return timer_service::is_running() && ATOMIC_GET(&m_current_jobs) >= 0;
 }
 
 size_t work_manager::get_worker_count() {

@@ -4,6 +4,7 @@
 #include <map>
 #include "kirin/common/lock_wrapper.h"
 #include "kirin/job/base_item.h"
+#include "kirin/job/thread.h"
 
 BEGIN_KIRIN_NS(timer);
 
@@ -21,18 +22,23 @@ public:
 
     bool add_to_timer(uint64_t run_tick, job::item_base* p_item);
     bool remove_from_timer(job::item_base* p_item);
-    virtual void run();
+    void run_timer();
+    virtual bool is_running();
 
 protected:
     virtual int do_process(job::item_base* p_item,
                            bool is_callbacker_referred,
                            bool is_emergent) = 0;
+    virtual void run();
 
 protected:
     common::mutex m_mutex;
+    multi_map m_timer_map;
 
 private:
-    multi_map m_timer_map;
+    volatile bool m_running;
+    int m_efd; /// epoll fd
+    job::thread m_thread;
 };
 
 END_KIRIN_NS(timer);

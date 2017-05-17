@@ -11,8 +11,8 @@ class thread {
 static void* thread_run(void* ptr);
 
 public:
-    bool create(void* p_arg);
-    size_t batch_create(void* p_arg, size_t num);
+    bool create(task* tsk);
+    size_t batch_create(task* tsk, size_t num);
     bool join();
     bool join_range(size_t begin_index, size_t end_index);
 

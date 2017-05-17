@@ -32,6 +32,9 @@ public:
         uint32_t msg_id = internal_msg->get_mid();
         switch (msg_id) {
             case message::internal_action::KIRIN_IA_READ:
+                std::cout << "run callbacker with msg: " <<
+                     message::internal_action::action2str(msg_id) << std::endl;
+                break;
             case message::internal_action::KIRIN_IA_WRITE:
                 std::cout << "run callbacker with msg: " << 
                      message::internal_action::action2str(msg_id) << std::endl;
@@ -68,29 +71,47 @@ void work_manager_test::test_all() {
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
         KIRIN_DELETE_AND_SET_NULL(async_item);
 
-        std::cout << "\tend case 1" << std::endl;
+        std::cout << "\tend case 1\n" << std::endl;
     }
 
     {
         std::cout << "\ttest case 2: " << std::endl;
         test_callbacker* callbacker = new (std::nothrow) test_callbacker;
         message::message_base* msg = new (std::nothrow)
-                   message::internal_message(message::internal_action::KIRIN_IA_WRITE);
+                   message::internal_message(message::internal_action::KIRIN_IA_READ);
         assert(msg != NULL && callbacker != NULL);
 
         async::async_work_item* async_item = new async::async_work_item;
         async_item->message = msg;
         async_item->p_callbacker = callbacker;
  
-        err = g_work_manager->delay_run(async_item, false, 10000);
+        err = g_work_manager->delay_run(async_item, false, 1000);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+        sleep(2);
+        KIRIN_DELETE_AND_SET_NULL(async_item);
+        std::cout << "\tend case 2\n" << std::endl;
+    }
+
+    {
+        std::cout << "\ttest case 3: " << std::endl;
+        test_callbacker* callbacker = new (std::nothrow) test_callbacker;
+        async::async_work_item* async_item = new async::async_work_item;
+        message::message_base* msg = new (std::nothrow)
+                   message::internal_message(message::internal_action::KIRIN_IA_WRITE);
+        assert(msg != NULL && callbacker != NULL);
+        async_item->message = msg;
+        async_item->p_callbacker = callbacker;
+
+        err = g_work_manager->delay_run(async_item, false, 1000);
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
 
         err = g_work_manager->cancel_run(async_item);
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
 
+        sleep(2);
         KIRIN_DELETE_AND_SET_NULL(async_item);
 
-        std::cout << "\tend case 2" << std::endl;
+        std::cout << "\tend case 3\n" << std::endl;
     }
 
     g_work_manager->stop(true);
