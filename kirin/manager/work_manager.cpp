@@ -24,7 +24,7 @@ void work_manager::dummy(job::item_base* item_ptr) {
 
 }
 
-work_manager::work_manager():
+work_manager::work_manager(): 
                 m_thread_pool(TT_CPU, MAX_WORKER_THREADS, false) {
     m_current_jobs = INT_MIN;
 }
@@ -41,6 +41,7 @@ int work_manager::start(size_t workers, uint32_t timer_precision) {
 
     if (m_thread_pool.start(workers)) {
         ATOMIC_SET(&m_current_jobs, 0);
+        timer_service::start();
         return common::kirin_error::KIRIN_ERR_OK;
     }
 

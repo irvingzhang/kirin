@@ -8,16 +8,6 @@ env = Environment(tools=['default', 'ascons'])
 env.requireVersion(6)
 env['heapchecktype'] = 'tcmalloc'
 env['enable_strip'] = False
-'''
-env['system_includedir'].append(env['TOP_DIR'] + '/kirin/thirdparty/googletest/googletest/')
-env['system_includedir'].append(env['TOP_DIR'] + '/kirin/thirdparty/googletest/googletest/src/')
-env['system_includedir'].append(env['TOP_DIR'] + '/kirin/thirdparty/googletest/googletest/include/')
-env['system_includedir'].append(env['TOP_DIR'] + '/kirin/thirdparty/googletest/googletest/gtest/')
-env.updateOption('system_includedir', env['system_includedir'])
-'''
-##env.addOptions(PathListVariable('apsara_boost_path', 'path to apsara and apsara boost path',
-##                                [env['depend_prefix'][0] + '/include/apsara/',
-##                                env['depend_prefix'][0] + '/include/apsara/boost/tr1/']))
 
 vars = Variables()
 vars.Add('version', 'version used to compile rpm', '0.0.1')

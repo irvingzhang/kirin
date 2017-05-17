@@ -8,8 +8,8 @@ env = env.Clone()
 
 env['kirin_libs'] = ['kirin', 'dl']
 
-env['all_libs'] = env['kirin_libs'] #+ env['common_libs'] + env['apsara_libs']
-env['test_libs'] = env['kirin_libs'] #+ env['common_libs'] + env['apsara_libs_test']
+env['all_libs'] = env['kirin_libs'] 
+env['test_libs'] = env['kirin_libs'] 
 
 env.Append(ACSUBST = {'BUILDDIR': env['RELATIVE_BUILD_DIR']})
 env.Append(ACSUBST = {'TOP_BUILDDIR': env['BUILD_DIR']})
@@ -18,7 +18,6 @@ env.Append(ACSUBST = {'VERSION': env['version']})
 
 env['ABS_BUILD_DIR'] = env['TOP_DIR'] + '/' + env['BUILD_DIR'].replace('#', '')
 
-env.Append(ACSUBST = {'DOTEST_LOGGER_CONF': env['TOP_DIR'] + '/kirin/test/test_logger.conf'})
 env.aACSubst(target = ['kirin/test/test.h'],
              source = ['kirin/test/test.h.in'])
 

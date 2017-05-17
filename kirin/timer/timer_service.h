@@ -22,10 +22,11 @@ public:
 
     bool add_to_timer(uint64_t run_tick, job::item_base* p_item);
     bool remove_from_timer(job::item_base* p_item);
-    void run_timer();
+    void start();
     virtual bool is_running();
 
 protected:
+    void run_timer();
     virtual int do_process(job::item_base* p_item,
                            bool is_callbacker_referred,
                            bool is_emergent) = 0;

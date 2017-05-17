@@ -2,6 +2,7 @@
 #include "kirin/timer/timer.h"
 #include "kirin/async/async.h"
 #include "kirin/timer/test/timer_service_test.h"
+#include "kirin/manager/work_manager.h"
 
 BEGIN_KIRIN_NS(timer);
 CPPUNIT_TEST_SUITE_REGISTRATION(timer_service_test);
@@ -49,6 +50,7 @@ void timer_service_test::test_all() {
         std::cout << "\tstart case 1: " << std::endl;
 
         obj_with_timer owt;
+        owt.start();
         for (uint64_t index = 0; index < 10; ++index) {
             job::item_base* ptmp = new job::work_item();
             bool add_succ = owt.add_to_timer(0, ptmp);
@@ -59,7 +61,11 @@ void timer_service_test::test_all() {
         sleep(2);
     
         std::cout << "\tendl case 1\n" << std::endl;
+    }
 
+    {
+        obj_with_timer owt;
+        owt.start();
         std::cout << "\tstart case 2: " << std::endl;
         for (uint64_t index = 0; index < 10; ++index) {
             job::item_base* ptmp = new job::work_item();
@@ -71,16 +77,23 @@ void timer_service_test::test_all() {
         sleep(5);
 
         std::cout << "\tendl case 2\n" << std::endl;
+    }
 
+    {
+        obj_with_timer owt;
+        owt.start();
         std::cout << "\tstart case 3: " << std::endl;
         job::item_base* to_remove = NULL;
         for (uint64_t index = 0; index < 10; ++index) {
             async::async_work_item* ptmp = new async::async_work_item();
             uint64_t run_tick = index + g_last_tick;
             ptmp->n_run_tick = run_tick;
+
             if (index == 5) to_remove = ptmp;
+
             bool add_succ = owt.add_to_timer(run_tick, ptmp);
             CPPUNIT_ASSERT(add_succ);
+
             if (index != 5) {
                 KIRIN_DELETE_AND_SET_NULL(ptmp);
             } else {
