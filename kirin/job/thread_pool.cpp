@@ -1,6 +1,6 @@
 #include <sched.h>
-#include <assert.h>
 #include <iostream>
+#include <assert.h>
 #include "kirin/job/thread_pool.h"
 #include "kirin/common/atomic_op.h"
 #include "kirin/common/memory_op.h"
@@ -11,14 +11,6 @@ BEGIN_KIRIN_NS(job);
 
 bool work_ctx_comparator(work_ctx* ctx1, work_ctx* ctx2) {
     return ctx1->jobq->size() < ctx2->jobq->size();
-}
-
-void* thread_pool::thread_func(void* cxt) {
-    task* task_ptr = new (std::nothrow) task(cxt);
-    task_ptr->run();
-
-    KIRIN_DELETE_AND_SET_NULL(task_ptr);
-    return NULL;
 }
 
 void thread_pool::dummy(item_base* item_ptr) {
@@ -47,7 +39,6 @@ thread_pool::thread_pool(thread_type type,
               m_thread_type(type),
               m_workers(0),
               m_max_workers(max_workers) {
-    m_worker_threads.clear();
     m_ctxs.clear();
     for (size_t index = 0; index < m_max_workers; ++index) {
         work_ctx* p_ctx = static_cast<work_ctx*>(alloc(sizeof(work_ctx)));
@@ -69,7 +60,6 @@ thread_pool::thread_pool(thread_type type,
 thread_pool::~thread_pool() {
     this->stop();
 
-    m_worker_threads.clear();
     if (m_share_queue) KIRIN_DELETE_AND_SET_NULL(m_ctxs[0]->jobq);
 
     for (size_t index = 0; index < m_ctxs.size(); ++index) {
@@ -128,15 +118,7 @@ size_t thread_pool::add_worker(const size_t workers) {
             assert(m_ctxs[m_workers]->jobq != NULL);
         }
 
-        pthread_t ntid;
-        if (::pthread_create(&ntid, NULL, 
-                    thread_func, m_ctxs[m_workers]) != 0) {
-            std::cout << "create thread failed" << std::endl;
-            break;
-        }
-
-        m_worker_threads.push_back(ntid);
-        ++m_workers;
+        if (m_threads.create(m_ctxs[m_workers])) ++m_workers;
     }
 
     return actual_added;
@@ -154,10 +136,7 @@ size_t thread_pool::del_worker(const size_t workers, bool is_final_stop) {
         m_ctxs[m_workers]->jobq->produce(static_cast<item_base*>(ptr + m_workers));
     }
 
-    for (size_t index = m_workers; index < curr_workers; ++index) {
-        pthread_join(m_worker_threads[index], NULL); /// block for thread join
-        std::cout << "join thread:" << m_ctxs[index]->thread_id << std::endl;
-    }
+    m_threads.join_range(m_workers, curr_workers);
 
     delete [] ptr;
     return actual_del;

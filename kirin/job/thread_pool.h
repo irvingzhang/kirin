@@ -1,9 +1,9 @@
 #ifndef KIRIN_JOB_THREAD_POOL_H
 #define KIRIN_JOB_THREAD_POOL_H
 
-#include <pthread.h>
 #include <vector>
 #include "kirin/job/base_item.h"
+#include "kirin/job/thread.h"
 
 BEGIN_KIRIN_NS(job);
 
@@ -26,7 +26,6 @@ private:
     size_t add_worker(const size_t workers);
     size_t del_worker(const size_t workers, bool is_final_stop = false);
 
-    static void* thread_func(void* ctx);
     static bool terminate_func(item_base* item, work_ctx* p_ctx);
     static void dummy(item_base* item_ptr);
 
@@ -36,7 +35,7 @@ private:
     thread_type m_thread_type;
     size_t m_workers;
     size_t m_max_workers;
-    std::vector<pthread_t> m_worker_threads;
+    thread m_threads;
     std::vector<work_ctx*> m_ctxs;
 };
 
