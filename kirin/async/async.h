@@ -11,7 +11,10 @@ BEGIN_KIRIN_NS(async);
 class callbacker;
 struct async_work_item: public job::work_item {
     int error;
-    message::message_base* message;
+    union {
+        message::message_base* message; /// for complex usage
+        int action;
+    };
     callbacker* p_callbacker;
     uint64_t n_run_tick;
 
@@ -22,15 +25,21 @@ struct async_work_item: public job::work_item {
                    p_callbacker(NULL),
                    n_run_tick(0) {}
 
-    async_work_item(message::message_base* msg): 
+    explicit async_work_item(int action):
+                                    work_item(),
+                                    error(0),
+                                    action(0),
+                                    p_callbacker(NULL),
+                                    n_run_tick(0) {
+    }
+    explicit async_work_item(message::message_base* msg): 
                                     work_item(), 
                                     error(0),
-                                    message(NULL),
+                                    message(msg),
                                     p_callbacker(NULL),
                                     n_run_tick(0) {}
 
     virtual ~async_work_item() {
-        KIRIN_DELETE_AND_SET_NULL(message);
     }
 
     virtual const async_work_item* get_class() const {
