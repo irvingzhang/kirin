@@ -1,6 +1,8 @@
 #ifndef KIRIN_COMMON_CAST_H
 #define KIRIN_COMMON_CAST_H
 
+#include "kirin/common/common.h"
+
 BEGIN_KIRIN_NS(common);
 
 // a safe version of static_cast or const_cast

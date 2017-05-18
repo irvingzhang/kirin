@@ -32,8 +32,8 @@ protected:
     int do_process(job::item_base* p_item,
                            bool is_callbacker_referred,
                            bool is_emergent) {
-        std::cout << "success fully run do_process with last time tick: " 
-                << g_last_tick << std::endl;
+        std::cout << "success fully run do_process with time tick: " 
+                << g_last_tick + 1 << std::endl;
         return 0;
     }
     
