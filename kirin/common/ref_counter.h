@@ -10,7 +10,7 @@ template<typename T>
 class ref_counter {
 public:
     ref_counter(): m_ref_num(0) {}
-    ~ref_counter() {}
+    virtual ~ref_counter() {}
 
     T add_ref(const T n = 1) {
         return ATOMIC_INC(&m_ref_num, n);
