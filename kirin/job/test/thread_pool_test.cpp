@@ -2,7 +2,6 @@
 #include <sys/syscall.h>
 #include "kirin/job/test/thread_pool_test.h"
 #include "kirin/job/base_item.h"
-#include "kirin/common/memory_op.h"
 
 BEGIN_KIRIN_NS(job);
 CPPUNIT_TEST_SUITE_REGISTRATION(thread_pool_test);

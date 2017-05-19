@@ -4,8 +4,8 @@
 #include <sys/syscall.h>
 #include "kirin/job/thread_pool.h"
 #include "kirin/common/atomic_op.h"
-#include "kirin/common/memory_op.h"
 #include "kirin/common/cast.h"
+#include "kirin/memory/memory_op.h"
 
 BEGIN_KIRIN_NS(job);
 
