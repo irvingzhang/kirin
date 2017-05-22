@@ -13,7 +13,7 @@ async_cpps = env.aDirs('async')
 timer_cpps = env.aDirs('timer')
 memory_cpps = env.aDirs('memory')
 manager_cpps = env.aDirs('manager')
-cpps = [common_cpps, memory_cpps, job_cpps, 
+cpps = [common_cpps, job_cpps, memory_cpps, 
         message_cpps, async_cpps, timer_cpps, manager_cpps]
 
 target = env.aSharedLibraryAndInstall(target = 'kirin',
