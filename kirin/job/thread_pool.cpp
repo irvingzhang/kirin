@@ -72,7 +72,7 @@ thread_pool::thread_pool(thread_type type,
               m_max_workers(max_workers) {
     m_ctxs.clear();
     for (size_t index = 0; index < m_max_workers; ++index) {
-        work_ctx* p_ctx = static_cast<work_ctx*>(alloc(sizeof(work_ctx)));
+        work_ctx* p_ctx = static_cast<work_ctx*>(memory::alloc(sizeof(work_ctx)));
         p_ctx->id = index;
         p_ctx->type = m_thread_type;
         p_ctx->njobs = 0;
