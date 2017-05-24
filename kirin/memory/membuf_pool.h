@@ -4,7 +4,6 @@
 #include <list>
 #include <map>
 #include "kirin/memory/object_pool.h"
-#include "kirin/common/arithmetic_util.h"
 
 BEGIN_KIRIN_NS(memory);
 

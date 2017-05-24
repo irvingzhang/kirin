@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdexcept>
+#include "kirin/common/arithmetic_util.h"
 #include "kirin/memory/membuf_pool.h"
 #include "kirin/memory/memory_op.h"
 
