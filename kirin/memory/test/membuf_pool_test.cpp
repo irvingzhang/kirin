@@ -56,7 +56,7 @@ void membuf_pool_test::test_all() {
 
         std::cout << "free memory success" << std::endl;
         
-        sleep(GC_INTERVAL/1000 + 2);
+        sleep(GC_INTERVAL/1000 + 1);
         
         std::cout << "\tend case 1" << std::endl;
     }
