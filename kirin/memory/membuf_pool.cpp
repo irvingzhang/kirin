@@ -5,6 +5,29 @@
 
 BEGIN_KIRIN_NS(memory);
 
+mem_arg::mem_arg(uint32_t blocksize, uint32_t per_alloc_count,
+                 uint32_t min_alloc_times, uint32_t max_alloc_times,
+                 double low_priority_ratio, double high_priority_ratio):
+                 m_blocksize(blocksize),
+                 m_per_alloc_count(per_alloc_count),
+                 m_min_alloc_times(min_alloc_times),
+                 m_max_alloc_times(max_alloc_times),
+                 m_low_priority_ratio(low_priority_ratio),
+                 m_high_priority_ratio(high_priority_ratio) {
+    m_blockbits = common::log_2(m_blocksize);
+    m_max_alloc_count = m_per_alloc_count * m_max_alloc_times;
+    m_buffsize = m_blocksize * m_per_alloc_count;;
+    m_allocated_count = 0;
+
+    if (!common::is_equal(m_low_priority_ratio, 0.0)) {
+        m_watermarks[0] = static_cast<uint64_t>(m_max_alloc_count *
+                                                m_low_priority_ratio);
+        m_watermarks[1] = static_cast<uint64_t>(m_max_alloc_count *
+                                                m_high_priority_ratio);
+        m_watermarks[2] = m_max_alloc_count - 1;
+    }
+}
+
 membuf_pool::membuf_pool(const char* name): 
                         object_pool(name),
                         m_alloc_times(0),
