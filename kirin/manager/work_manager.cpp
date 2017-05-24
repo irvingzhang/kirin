@@ -6,6 +6,7 @@
 #include "kirin/common/cast.h"
 #include "kirin/timer/timer.h"
 #include "kirin/manager/work_manager.h"
+#include "kirin/memory/object_pool_manager.h"
 
 BEGIN_KIRIN_NS(manager);
 
@@ -42,6 +43,7 @@ int work_manager::start(size_t workers, uint32_t timer_precision) {
     if (m_thread_pool.start(workers)) {
         ATOMIC_SET(&m_current_jobs, 0);
         timer_service::start();
+        memory::g_object_pool_manager->start_gc();
         return common::kirin_error::KIRIN_ERR_OK;
     }
 

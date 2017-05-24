@@ -11,6 +11,9 @@ struct internal_action {
     enum {
         KIRIN_IA_READ = 1,
         KIRIN_IA_WRITE = 2,
+        KIRIN_IA_GC = 3,
+
+        KIRIN_IA_INTERNAL_END = 2048,
     };
 
     static std::string action2str(int action) {
@@ -19,6 +22,8 @@ struct internal_action {
                 return "read";
             case KIRIN_IA_WRITE:
                 return "write";
+            case KIRIN_IA_GC:
+                return "gc"; 
             default:
                 return "unsupported action";
         }

@@ -21,6 +21,7 @@ private:
     void do_gc();
 
 private:
+    volatile bool m_gc_started;
     std::list<object_pool*> m_pools;
 };
 

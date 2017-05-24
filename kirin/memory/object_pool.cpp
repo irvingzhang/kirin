@@ -4,6 +4,7 @@
 BEGIN_KIRIN_NS(memory);
 
 object_pool::object_pool(const char* name) {
+    memset(m_name, 0, sizeof(m_name));
     strncpy(m_name, name, sizeof(name));
     g_object_pool_manager->do_register(this);
 }

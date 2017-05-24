@@ -29,6 +29,10 @@ enum thread_type {
     TT_DISK,
 };
 
+#ifndef GC_INTERVAL
+#define GC_INTERVAL 6000
+#endif
+
 #ifndef CONTAIN_RECORD
 #define CONTAIN_RECORD(address, type, field) (reinterpret_cast<type*>((char*)(address) - offsetof(type, field)))
 #endif
