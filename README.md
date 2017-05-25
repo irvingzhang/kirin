@@ -22,4 +22,4 @@ The working thread and thread pool are implemented in this folder. Please refer 
 Everyone can easily implement their multithreading and asynchronous actions using the working manager in this folder. A simple example is provided herein.
 
 * **memory**   
-A memory pool is implemented in the folder 'memory'. The framework uses reference technology to avoid frequently new/delete or malloc/free memories.
+A memory pool is implemented in the folder 'memory'. The framework employs reference technique to avoid frequently new/delete or malloc/free memories, thereby improving the system performance.
