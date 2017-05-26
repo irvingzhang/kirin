@@ -5,6 +5,9 @@
 
 BEGIN_KIRIN_NS(memory);
 CPPUNIT_TEST_SUITE_REGISTRATION(membuf_pool_test);
+ 
+#ifndef __KIRIN_TEST__
+#define __KIRIN_TEST__
 
 membuf_pool_test::membuf_pool_test() {
 }
@@ -55,13 +58,16 @@ void membuf_pool_test::test_all() {
         }
 
         std::cout << "free memory success" << std::endl;
-        
+
         sleep(GC_INTERVAL/1000 + 1);
-        
+
         std::cout << "\tend case 1" << std::endl;
     }
 
     std::cout << "\nend test_all" << std::endl;
 }
+
+#undef __KIRIN_TEST__
+#endif
 
 END_KIRIN_NS(memory);

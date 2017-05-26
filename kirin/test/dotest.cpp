@@ -3,8 +3,6 @@
 #include <cppunit/CompilerOutputter.h>
 #include <string>
 #include <stdlib.h>
-//#include "kirin/common/log.h"
-//#include "kirin/test/test.h"
 #include "kirin/common/common.h"
 
 
@@ -13,7 +11,6 @@ using namespace CppUnit;
 
 int main( int argc, char **argv)
 {
-    //KIRIN_LOG_CONFIG(KIRIN_DOTEST_LOGGER_CONF);
     bool ok = false;
     {
         TextUi::TestRunner runner;
@@ -22,6 +19,5 @@ int main( int argc, char **argv)
         runner.addTest( registry.makeTest() );
         ok = runner.run("", false);
     }
-    //KIRIN_LOG_SHUTDOWN();
     return ok ? 0 : 1;
 }

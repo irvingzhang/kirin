@@ -30,7 +30,11 @@ enum thread_type {
 };
 
 #ifndef GC_INTERVAL
+#ifdef NDEBUG 
+#define GC_INTERVAL 1000
+#else
 #define GC_INTERVAL 60000
+#endif
 #endif
 
 #ifndef CONTAIN_RECORD
