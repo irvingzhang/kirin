@@ -3,7 +3,7 @@ Kirin is a lightweight framework for multithreading and asynchronous programming
 
 ## Introduction ##
 * **common**     
-All files in this folder are some fundamental functions or utils for the framework. It covers string utils, singleton functions, etc.
+All files in this folder are some fundamental functions or utils for the framework. It covers string utils, sliding window, type convertion tools, etc.
 
 * **timer**      
 The implementation of timer using epoll can be found in this folder. Test cases are provided for a deep understanding of the timer.   
