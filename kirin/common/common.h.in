@@ -2,18 +2,31 @@
 #define KIRIN_COMMON_H
 
 #include <cstddef>
+#include <string>
+#include <iostream>
 
 #define BEGIN_KIRIN_NS(x) namespace kirin { namespace x {
 #define END_KIRIN_NS(x) } }
 #define USE_KIRIN_NS(x) using namespace kirin::x
 
-#include <string>
 namespace kirin {
 const std::string VERSION("@VERSION@");
 
-#define KIRIN_DELETE_AND_SET_NULL(ptr)     \
+#define KIRIN_DELETE_AND_SET_NULL(ptr)          \
     if (ptr != NULL)  {                         \
         delete ptr;                             \
+        ptr = NULL;                             \
+    }
+
+#define KIRIN_ARRAY_DELETE_AND_SET_NULL(ptr)    \
+    if (ptr != NULL)  {                         \
+        delete [] ptr;                          \
+        ptr = NULL;                             \
+    }
+
+#define KIRIN_FREE_AND_SET_NULL(ptr)            \
+    if (ptr != NULL)  {                         \
+        free(ptr);                              \
         ptr = NULL;                             \
     }
 } // end namespace kirin
@@ -30,7 +43,7 @@ enum thread_type {
 };
 
 #ifndef GC_INTERVAL
-#ifdef NDEBUG 
+#ifdef KIRIN_UNITTEST 
 #define GC_INTERVAL 1000
 #else
 #define GC_INTERVAL 60000

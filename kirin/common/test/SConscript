@@ -8,12 +8,12 @@ env = env.Clone()
 
 test_sources = [
             '#kirin/test/dotest.cpp',
-            'membuf_pool_test.cpp',
+            'sliding_window_test.cpp',
         ]
 
 env.Prepend(LIBS = ['cppunit'])
 
-env.aTest(target = 'kirin_memory_test',
+env.aTest(target = 'kirin_common_test',
           source = test_sources,
           LIBS = env['test_libs'],
          )

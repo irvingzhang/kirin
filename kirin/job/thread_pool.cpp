@@ -1,5 +1,4 @@
 #include <sched.h>
-#include <iostream>
 #include <assert.h>
 #include <sys/syscall.h>
 #include "kirin/job/thread_pool.h"
@@ -15,7 +14,7 @@ void thread_pool::thread_run(void* arg) {
     assert(jobq != NULL);
 
     p_ctx->thread_id = syscall(SYS_gettid);
-    std::cout << "thread start running: " << p_ctx->thread_id << std::endl;
+    printf("thread %d start running\n", p_ctx->thread_id);
     while (true) {
         item_base* item = NULL;
         if (!jobq->consume(item)) break;
@@ -45,7 +44,7 @@ bool work_ctx_comparator(work_ctx* ctx1, work_ctx* ctx2) {
 }
 
 void thread_pool::dummy(item_base* item_ptr) {
-    std::cout << "run dummy" << std::endl;
+    printf("run dummy\n");
     KIRIN_DELETE_AND_SET_NULL(item_ptr);
 }
 
@@ -57,7 +56,7 @@ bool thread_pool::terminate_func(item_base* item, work_ctx* p_ctx) {
         return true;
     }
 
-    std::cout << "run terminate_func of thread: " << p_ctx->thread_id << std::endl;
+    printf("terminate thread %d\n", p_ctx->thread_id);
     p_ctx->jobq->close();
     return false;
 }

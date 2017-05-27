@@ -26,4 +26,3 @@ env.SConscript(
 # insatll .h for making rpm
 env.aInstallHeader(env['BUILD_DIR'] + '/kirin/common/*.h', 'kirin/common');
 env.aInstallHeader(env['BUILD_DIR'] + '/kirin/test/*.h', 'kirin/test');
-

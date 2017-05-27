@@ -1,3 +1,6 @@
+#ifndef KIRIN_UNITTEST
+#define KIRIN_UNITTEST
+
 #include <iostream>
 #include "kirin/manager/work_manager.h"
 #include "kirin/memory/object_pool_manager.h"
@@ -6,9 +9,6 @@
 BEGIN_KIRIN_NS(memory);
 CPPUNIT_TEST_SUITE_REGISTRATION(membuf_pool_test);
  
-#ifndef __KIRIN_TEST__
-#define __KIRIN_TEST__
-
 membuf_pool_test::membuf_pool_test() {
 }
 
@@ -67,7 +67,7 @@ void membuf_pool_test::test_all() {
     std::cout << "\nend test_all" << std::endl;
 }
 
-#undef __KIRIN_TEST__
-#endif
-
 END_KIRIN_NS(memory);
+
+#undef KIRIN_UNITTEST
+#endif
