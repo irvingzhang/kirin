@@ -12,6 +12,7 @@ struct internal_action {
         KIRIN_IA_READ = 1,
         KIRIN_IA_WRITE = 2,
         KIRIN_IA_GC = 3,
+        KIRIN_IA_INIT = 4,
 
         KIRIN_IA_INTERNAL_END = 2048,
     };
@@ -24,6 +25,8 @@ struct internal_action {
                 return "write";
             case KIRIN_IA_GC:
                 return "gc"; 
+            case KIRIN_IA_INIT:
+                return "init";
             default:
                 return "unsupported action";
         }

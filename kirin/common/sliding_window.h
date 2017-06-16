@@ -122,16 +122,19 @@ void sliding_window<ITEM>::start(void* p_ctx) {
 
 template<typename ITEM>
 void sliding_window<ITEM>::pause() {
-    assert(m_thread_id = syscall(SYS_gettid));
+    assert(m_thread_id == syscall(SYS_gettid));
     m_state = SWS_PAUSE;
 }
 
 template<typename ITEM>
 void sliding_window<ITEM>::add_item(ITEM* p_item) {
-    assert(p_item != NUU);
+    assert(p_item != NULL);
     actual_sliding_window_working_item* p_actual_item = down_cast<actual_sliding_window_working_item*>(p_item);    
 
-    assert(m_thread_id = syscall(SYS_gettid));
+    assert(m_thread_id == syscall(SYS_gettid));
+    #ifdef KIRIN_UNITTEST
+        printf("[add_item] m_thread_id: %d, syscall(SYS_gettid): %ld\n", m_thread_id, syscall(SYS_gettid));
+    #endif
     assert(m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] == IS_SLIDE_EMPTY);
 
     m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] = IS_SET_READY;
@@ -144,7 +147,10 @@ void sliding_window<ITEM>::free_item(ITEM* p_item) {
     assert(p_item != NULL);
     actual_sliding_window_working_item* p_actual_item = down_cast<actual_sliding_window_working_item*>(p_item);
 
-    assert(m_thread_id = syscall(SYS_gettid));
+    assert(m_thread_id == syscall(SYS_gettid));
+    #ifdef KIRIN_UNITTEST
+        printf("[free_item] m_thread_id: %d, syscall(SYS_gettid): %ld\n", m_thread_id, syscall(SYS_gettid));
+    #endif
     assert(m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] == IS_SLIDE_READY);
    
     m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] = IS_SET_EMPTY;

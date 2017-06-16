@@ -7,7 +7,6 @@
 #include "kirin/manager/work_manager.h"
 #include "kirin/message/internal_message.h"
 #include "kirin/common/test/sliding_window_test.h"
-#include "kirin/common/lock.h"
 
 BEGIN_KIRIN_NS(common);
 CPPUNIT_TEST_SUITE_REGISTRATION(sliding_window_test);
@@ -41,14 +40,22 @@ struct test_async_item: public async::async_work_item {
     }
 };
 
-class action_callbacker: public async::callbacker {
+class empty_callbacker: public async::callbacker {
 public:
     void callback(async::async_work_item* aitem);
-
 };
 
-class window_test {
+class window_test: public async::callbacker {
 public:
+    window_test() {
+        callbacker = new empty_callbacker();
+        callbacker->add_ref();
+    }
+
+    ~window_test() {
+        callbacker->release();
+    }
+
     bool init() {
         return sw.init(10, on_init, on_empty, on_ready);
     }
@@ -57,9 +64,30 @@ public:
         sw.start(this);
     }
 
-    void run(sliding_item* p_item) {
-        common::exclusive_lock lock(m_mutex);
-        this->sw.free_item(p_item);
+    void callback(async::async_work_item* aitem) {
+        test_async_item* item = down_cast<test_async_item*>(aitem);
+        switch (item->action) {
+            case message::internal_action::KIRIN_IA_READ:
+                std::cout << "sliding_window callbacker with msg: " <<
+                     message::internal_action::action2str(item->action) << std::endl;
+                (static_cast<window_test*>(item->p_ctx))->sw.free_item(item->p_item);
+                break;
+            case message::internal_action::KIRIN_IA_WRITE:
+                std::cout << "slinding_window callbacker with msg: " <<
+                     message::internal_action::action2str(item->action) << std::endl;
+                (static_cast<window_test*>(item->p_ctx))->sw.add_item(item->p_item);
+                break;
+            case message::internal_action::KIRIN_IA_INIT:
+                std::cout << "slinding_window callbacker with msg: " <<
+                     message::internal_action::action2str(item->action) << std::endl;
+                init();
+                start();
+                break;
+            default:
+                std::cout << "unsupported message" << std::endl;
+                break;
+        }
+        KIRIN_DELETE_AND_SET_NULL(aitem);
     }
 
 private:
@@ -69,42 +97,39 @@ private:
     }
 
     static void on_empty(sliding_item* p_item, void* ptr) {
-        window_test* p_ctx = static_cast<window_test*>(ptr);
         static int counter = 0;
         p_item->id = ++counter;
         std::cout << "on_empty, counter " << counter << std::endl;
-        if (counter <= 30)
-            p_ctx->sw.add_item(p_item);
+        if (counter <= 30) {
+            test_async_item* aitem = new test_async_item();        
+            aitem->action = message::internal_action::KIRIN_IA_WRITE;
+            aitem->p_callbacker = ((window_test*)ptr)->callbacker;
+            aitem->p_ctx = ptr;
+            aitem->p_item = p_item;
+            int err = manager::g_work_manager->delay_run(aitem, false, 1000);
+            CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+        }
     }
 
     static void on_ready(sliding_item* p_item, void* ptr) {
-        int rand_num = (int)(1 + 2.0 * rand() / RAND_MAX);
-        std::cout << "on_ready, counter " << p_item->id << ", rand_num = " << rand_num << std::endl;
-        action_callbacker* callbacker = new action_callbacker();
-        test_async_item* aitem = new test_async_item();
-        assert(!callbacker && !aitem);
-        aitem->action = message::internal_action::KIRIN_IA_READ;
-        aitem->p_callbacker = callbacker;
-        aitem->p_ctx = ptr;
-        aitem->p_item = p_item;
-        int err = manager::g_work_manager->delay_run(aitem, false, rand_num * 1000);
-        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+        std::cout << "on_ready, counter " << p_item->id << std::endl;
+        ((window_test*)ptr)->sw.free_item(p_item);
     }
 
-private:
+public:
     sliding_window<sliding_item> sw;
-    common::mutex m_mutex;
+    empty_callbacker* callbacker;
 };
 
-void action_callbacker::callback(async::async_work_item* aitem) {
+void empty_callbacker::callback(async::async_work_item* aitem) {
     test_async_item* item = down_cast<test_async_item*>(aitem);
     switch (item->action) {
         case message::internal_action::KIRIN_IA_READ:
-            std::cout << "run callbacker with msg: " <<
+            std::cout << "empty callbacker with msg: " <<
                  message::internal_action::action2str(item->action) << std::endl;
             break;
         case message::internal_action::KIRIN_IA_WRITE:
-            std::cout << "run callbacker with msg: " <<
+            std::cout << "empty callbacker with msg: " <<
                  message::internal_action::action2str(item->action) << std::endl;
             break;
         default:
@@ -112,10 +137,10 @@ void action_callbacker::callback(async::async_work_item* aitem) {
             break;
     }
 
-    int rand_num = (int)(1 + 1.0 * rand() / RAND_MAX);
-    sleep(rand_num);
-    (static_cast<window_test*>(item->p_ctx))->run(item->p_item);
-    KIRIN_DELETE_AND_SET_NULL(aitem);
+    int rand_num = (int)(1 + 2.0 * rand() / RAND_MAX);
+    aitem->p_callbacker = (static_cast<window_test*>(item->p_ctx));
+    int err = manager::g_work_manager->delay_run(aitem, false, rand_num * 1000);
+    CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
 }
 
 void sliding_window_test::test_all() {
@@ -130,10 +155,18 @@ void sliding_window_test::test_all() {
     CPPUNIT_ASSERT(manager::g_work_manager->is_running());
 
     {
-        window_test wt;
-        CPPUNIT_ASSERT(wt.init());
-        wt.start();
-        sleep(20);
+        window_test* p_ctx = new window_test();
+        test_async_item* aitem = new test_async_item();
+        aitem->action = message::internal_action::KIRIN_IA_INIT;
+        aitem->p_callbacker = p_ctx;
+        p_ctx->add_ref();
+        aitem->p_ctx = NULL;
+        aitem->p_item = NULL;
+        int err = manager::g_work_manager->delay_run(aitem, false, 500);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+       
+        sleep(15);
+        p_ctx->release();
     }
 
     std::cout << "\nend test_all" << std::endl;
