@@ -39,6 +39,8 @@ private:
 
     struct actual_sliding_window_working_item: public ITEM {
         int sliding_window_inner_slot;
+
+        virtual ~actual_sliding_window_working_item() {}
     };
     actual_sliding_window_working_item* m_item_ptr;
     uint8_t* m_byte_map_ptr;
