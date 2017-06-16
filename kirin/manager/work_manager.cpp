@@ -110,7 +110,6 @@ int work_manager::delay_run(async::async_work_item* p_item,
 
         uint64_t deadline_tick = timer::g_last_tick + delay_time_in_ms / timer::g_tick_precision;
         p_item->n_run_tick = deadline_tick;
-
         if (add_to_timer(deadline_tick, static_cast<job::item_base*>(p_item))) 
             return common::kirin_error::KIRIN_ERR_OK;
     }

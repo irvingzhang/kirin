@@ -92,7 +92,6 @@ void timer_service::run() {
 bool timer_service::add_to_timer(uint64_t run_tick, job::item_base* p_item) {
     common::exclusive_lock lock(m_mutex);
     multi_map_iterator it =m_timer_map.insert(std::pair<uint64_t, job::item_base*>(run_tick, p_item));
-
     lock.unlock();
     return it != m_timer_map.end();
 }
