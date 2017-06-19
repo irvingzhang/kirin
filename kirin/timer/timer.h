@@ -9,7 +9,7 @@
 
 BEGIN_KIRIN_NS(timer);
 
-inline uint64_t rdtsc()  {  /// static function can only be used in current file
+static inline uint64_t rdtsc()  {  /// static function can only be used in current file
     unsigned hi, lo;
     __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
     return ((uint64_t)lo)|(((uint64_t)hi)<<32 );

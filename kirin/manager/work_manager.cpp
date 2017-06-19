@@ -80,7 +80,7 @@ size_t work_manager::get_worker_count() {
 int work_manager::append_job(async::async_work_item* p_item,
                              bool is_callbacker_referred,
                              bool is_emergent) {
-    if (p_item == NULL || p_item->message == NULL || p_item->p_callbacker == NULL)
+    if (p_item == NULL || p_item->p_callbacker == NULL)
         return common::kirin_error::KIRIN_ERR_INVALID_ARGUMENTS;
 
     if (ATOMIC_INC(&m_current_jobs, 1) >= 0) {
@@ -101,7 +101,7 @@ int work_manager::append_job(async::async_work_item* p_item,
 int work_manager::delay_run(async::async_work_item* p_item,
                             bool is_callbacker_referred,
                             uint64_t delay_time_in_ms) {
-    if (p_item == NULL || p_item->message == NULL || p_item->p_callbacker == NULL)
+    if (p_item == NULL || p_item->p_callbacker == NULL)
         return common::kirin_error::KIRIN_ERR_INVALID_ARGUMENTS;
 
     p_item->pfunc = dummy;
