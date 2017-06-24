@@ -67,19 +67,18 @@ public:
 };
 
 
-void work_manager_test::test_all() {
-    std::cout << "\nbegin test_all" << std::endl;
-
+void work_manager_test::test_1() {
     size_t workers = 3;
     uint32_t time_precision = 500; /// ms
-    CPPUNIT_ASSERT(!g_work_manager->is_running());
-    int err = g_work_manager->start(workers, time_precision);
-    CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
-
-    CPPUNIT_ASSERT_EQUAL(workers, g_work_manager->get_worker_count());
-    CPPUNIT_ASSERT(g_work_manager->is_running());
-    {
         std::cout << "\tstart case 1:" << std::endl;
+
+        CPPUNIT_ASSERT(!g_work_manager->is_running());
+        int err = g_work_manager->start(workers, time_precision);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+
+        CPPUNIT_ASSERT_EQUAL(workers, g_work_manager->get_worker_count());
+        CPPUNIT_ASSERT(g_work_manager->is_running());
+
         test_callbacker* callbacker = new (std::nothrow) test_callbacker;
         message::message_base *msg = new (std::nothrow) 
                 message::internal_message(message::internal_action::KIRIN_IA_WRITE);
@@ -93,12 +92,23 @@ void work_manager_test::test_all() {
         err = g_work_manager->append_job(async_item, false, false);
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
         KIRIN_DELETE_AND_SET_NULL(async_item);
-        
+        sleep(1);
+        g_work_manager->stop(true);   
         std::cout << "\tend case 1\n" << std::endl;
-    }
+}
 
-    {
+void work_manager_test::test_2() {
+    size_t workers = 3;
+    uint32_t time_precision = 500; /// ms
         std::cout << "\ttest case 2: " << std::endl;
+     
+        CPPUNIT_ASSERT(!g_work_manager->is_running());
+        int err = g_work_manager->start(workers, time_precision);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+
+        CPPUNIT_ASSERT_EQUAL(workers, g_work_manager->get_worker_count());
+        CPPUNIT_ASSERT(g_work_manager->is_running());
+
         test_callbacker* callbacker = new (std::nothrow) test_callbacker;
         message::message_base* msg = new (std::nothrow) 
                  message::internal_message(message::internal_action::KIRIN_IA_READ);
@@ -113,11 +123,22 @@ void work_manager_test::test_all() {
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
         sleep(2);
         KIRIN_DELETE_AND_SET_NULL(async_item);
+        g_work_manager->stop(true);
         std::cout << "\tend case 2\n" << std::endl;
     }
 
-    {
+void work_manager_test::test_3() {
+    size_t workers = 3;
+    uint32_t time_precision = 500; /// ms
         std::cout << "\ttest case 3: " << std::endl;
+
+        CPPUNIT_ASSERT(!g_work_manager->is_running());
+        int err = g_work_manager->start(workers, time_precision);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+                 
+        CPPUNIT_ASSERT_EQUAL(workers, g_work_manager->get_worker_count());
+        CPPUNIT_ASSERT(g_work_manager->is_running());
+
         test_callbacker* callbacker = new (std::nothrow) test_callbacker;
         async::async_work_item* async_item = new (std::nothrow) async::async_work_item;
         message::message_base* msg = new (std::nothrow) 
@@ -135,12 +156,23 @@ void work_manager_test::test_all() {
         sleep(2);
         KIRIN_DELETE_AND_SET_NULL(async_item);
         KIRIN_DELETE_AND_SET_NULL(msg);
+        g_work_manager->stop(true);
 
         std::cout << "\tend case 3\n" << std::endl;
     }
 
-    {
+void work_manager_test::test_4() {
+    size_t workers = 3;
+    uint32_t time_precision = 500; /// ms
         std::cout << "\ttest case 4: " << std::endl;
+
+        CPPUNIT_ASSERT(!g_work_manager->is_running());
+        int err = g_work_manager->start(workers, time_precision);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+
+        CPPUNIT_ASSERT_EQUAL(workers, g_work_manager->get_worker_count());
+        CPPUNIT_ASSERT(g_work_manager->is_running());
+
         action_callbacker* callbacker = new (std::nothrow) action_callbacker;
         assert(callbacker != NULL);
 
@@ -152,12 +184,9 @@ void work_manager_test::test_all() {
         CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
         sleep(2);
         KIRIN_DELETE_AND_SET_NULL(async_item);
+        g_work_manager->stop(true);
         std::cout << "\tend case 4\n" << std::endl;
     }
-
-    g_work_manager->stop(true);
-    std::cout << "end test_all\n" << std::endl;
-}
 
 END_KIRIN_NS(manager);
 

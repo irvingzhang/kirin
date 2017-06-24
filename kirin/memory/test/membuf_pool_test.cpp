@@ -64,6 +64,7 @@ void membuf_pool_test::test_all() {
         std::cout << "\tend case 1" << std::endl;
     }
 
+    manager::g_work_manager->stop(true);
     std::cout << "\nend test_all" << std::endl;
 }
 

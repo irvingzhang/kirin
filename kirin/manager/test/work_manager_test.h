@@ -9,7 +9,10 @@ BEGIN_KIRIN_NS(manager);
 class work_manager_test: public CppUnit::TestFixture {
 private:
     CPPUNIT_TEST_SUITE(work_manager_test);
-    CPPUNIT_TEST(test_all);
+    CPPUNIT_TEST(test_1);
+    CPPUNIT_TEST(test_2);
+    CPPUNIT_TEST(test_3);
+    CPPUNIT_TEST(test_4);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -19,7 +22,10 @@ public:
 public:
     void setUp();
     void tearDown();
-    void test_all();
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
 };
 
 END_KIRIN_NS(manager);

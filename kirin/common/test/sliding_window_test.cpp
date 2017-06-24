@@ -27,6 +27,7 @@ void sliding_window_test::tearDown() {
 
 struct sliding_item {
     int id;
+    int sliding_window_inner_slot;
 };
 
 struct test_async_item: public async::async_work_item {
@@ -156,18 +157,16 @@ void sliding_window_test::test_all() {
 
     {
         window_test* p_ctx = new window_test();
-        test_async_item* aitem = new test_async_item();
-        aitem->action = message::internal_action::KIRIN_IA_INIT;
-        aitem->p_callbacker = p_ctx;
         p_ctx->add_ref();
-        aitem->p_ctx = NULL;
-        aitem->p_item = NULL;
-        int err = manager::g_work_manager->delay_run(aitem, false, 500);
-        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+        p_ctx->init();
+        p_ctx->start();
        
         sleep(15);
+        p_ctx->sw.~sliding_window<sliding_item>();
         p_ctx->release();
     }
+
+    manager::g_work_manager->stop(true);
 
     std::cout << "\nend test_all" << std::endl;
 }

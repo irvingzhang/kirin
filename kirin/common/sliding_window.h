@@ -8,6 +8,7 @@
 
 BEGIN_KIRIN_NS(common);
 
+/// ITEM should have member "sliding_window_inner_slot"
 template<typename ITEM> 
 class sliding_window {
 public:
@@ -37,12 +38,7 @@ private:
         SWS_NOT_READY, SWS_INIT, SWS_RUNNING, SWS_PAUSE,
     } m_state;
 
-    struct actual_sliding_window_working_item: public ITEM {
-        int sliding_window_inner_slot;
-
-        virtual ~actual_sliding_window_working_item() {}
-    };
-    actual_sliding_window_working_item* m_item_ptr;
+    ITEM* m_item_ptr;
     uint8_t* m_byte_map_ptr;
     void* m_ctx;
     int m_thread_id;
@@ -71,6 +67,7 @@ template<typename ITEM>
 sliding_window<ITEM>::~sliding_window() {
     KIRIN_ARRAY_DELETE_AND_SET_NULL(m_item_ptr);
     KIRIN_FREE_AND_SET_NULL(m_byte_map_ptr);
+    printf("sliding window destroyed\n");
 }
 
 template<typename ITEM>
@@ -79,7 +76,7 @@ bool sliding_window<ITEM>::init(uint32_t window_len, ON_INIT_ITEM f_init,
     assert(window_len != 0 && m_state == SW_NOT_READY && m_window_len == 0);
    
     m_window_len = window_len;
-    m_item_ptr = new (std::nothrow) actual_sliding_window_working_item[m_window_len];
+    m_item_ptr = new (std::nothrow) ITEM[m_window_len];
     assert(m_item_ptr != NULL);
     m_byte_map_ptr = static_cast<uint8_t*>(memory::alloc(m_window_len));
 
@@ -129,15 +126,13 @@ void sliding_window<ITEM>::pause() {
 template<typename ITEM>
 void sliding_window<ITEM>::add_item(ITEM* p_item) {
     assert(p_item != NULL);
-    actual_sliding_window_working_item* p_actual_item = down_cast<actual_sliding_window_working_item*>(p_item);    
-
     assert(m_thread_id == syscall(SYS_gettid));
     #ifdef KIRIN_UNITTEST
         printf("[add_item] m_thread_id: %d, syscall(SYS_gettid): %ld\n", m_thread_id, syscall(SYS_gettid));
     #endif
-    assert(m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] == IS_SLIDE_EMPTY);
+    assert(m_byte_map_ptr[p_item->sliding_window_inner_slot] == IS_SLIDE_EMPTY);
 
-    m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] = IS_SET_READY;
+    m_byte_map_ptr[p_item->sliding_window_inner_slot] = IS_SET_READY;
 
     if (m_state == SWS_RUNNING) this->slide();
 }
@@ -145,15 +140,13 @@ void sliding_window<ITEM>::add_item(ITEM* p_item) {
 template<typename ITEM>
 void sliding_window<ITEM>::free_item(ITEM* p_item) {
     assert(p_item != NULL);
-    actual_sliding_window_working_item* p_actual_item = down_cast<actual_sliding_window_working_item*>(p_item);
-
     assert(m_thread_id == syscall(SYS_gettid));
     #ifdef KIRIN_UNITTEST
         printf("[free_item] m_thread_id: %d, syscall(SYS_gettid): %ld\n", m_thread_id, syscall(SYS_gettid));
     #endif
-    assert(m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] == IS_SLIDE_READY);
+    assert(m_byte_map_ptr[p_item->sliding_window_inner_slot] == IS_SLIDE_READY);
    
-    m_byte_map_ptr[p_actual_item->sliding_window_inner_slot] = IS_SET_EMPTY;
+    m_byte_map_ptr[p_item->sliding_window_inner_slot] = IS_SET_EMPTY;
     if (m_state == SWS_RUNNING) this->slide();
 }
 

@@ -8,7 +8,7 @@ static volatile int g_async_id = 0;
 
 void callbacker::init() {
     common::ref_counter<uint32_t>::set_ref(0);
-    m_id = ATOMIC_INC(&g_async_id, m_id);
+    m_id = ATOMIC_INC(&g_async_id, 1);
     sprintf(m_name, "callbacker#%lu", m_id);
 }
 

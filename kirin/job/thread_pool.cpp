@@ -58,6 +58,7 @@ bool thread_pool::terminate_func(item_base* item, work_ctx* p_ctx) {
 
     printf("terminate thread %d\n", p_ctx->thread_id);
     p_ctx->jobq->close();
+    KIRIN_DELETE_AND_SET_NULL(p_ctx->jobq);
     return false;
 }
 
@@ -93,7 +94,6 @@ thread_pool::~thread_pool() {
     if (m_share_queue) KIRIN_DELETE_AND_SET_NULL(m_ctxs[0]->jobq);
 
     for (size_t index = 0; index < m_ctxs.size(); ++index) {
-        KIRIN_DELETE_AND_SET_NULL(m_ctxs[index]->jobq);
         free(m_ctxs[index]);
     }
 
@@ -107,6 +107,8 @@ bool thread_pool::start(const size_t workers) {
 }
 
 bool thread_pool::stop() {
+    if (m_workers <= 0) return true;
+
     const size_t origin_workers = m_workers;
     return this->del_worker(m_workers, true) == origin_workers;
 }

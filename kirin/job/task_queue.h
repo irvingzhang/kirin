@@ -38,6 +38,13 @@ task_queue<T>::task_queue():
 template<typename T>
 task_queue<T>::~task_queue() {
     m_started = false;
+
+    common::exclusive_lock lock(m_mutex);
+    for (typename std::list<T*>::iterator it = m_tasks.begin();
+            it != m_tasks.end(); ++it) {
+        KIRIN_DELETE_AND_SET_NULL(*it);
+    }
+    m_tasks.clear();
 }
 
 template<typename T>

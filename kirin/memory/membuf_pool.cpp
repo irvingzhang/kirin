@@ -37,7 +37,7 @@ membuf_pool::membuf_pool(const char* name):
 }
 
 membuf_pool::~membuf_pool() {
-    this->destroy();
+    this->destroy(true);
 }
 
 void membuf_pool::destroy(bool is_final) {

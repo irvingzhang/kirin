@@ -10,21 +10,32 @@ object_pool_manager* g_object_pool_manager =
         common::singleton<object_pool_manager>::instance_ptr();
 
 object_pool_manager::object_pool_manager() {
+    m_async = new (std::nothrow) async::async_work_item;
+    assert(async_item != NULL);
     add_ref();
 }
 
 void object_pool_manager::start_gc() {
     m_gc_started = true;
+
+    m_async->action = message::internal_action::KIRIN_IA_GC;
+    m_async->p_callbacker = this;
+    manager::g_work_manager->delay_run(m_async, false, GC_INTERVAL);
     printf("object pools starts gc\n");
-    async::async_work_item* async_item = new (std::nothrow) async::async_work_item;
-    assert(async_item != NULL);
-    async_item->action = message::internal_action::KIRIN_IA_GC;
-    async_item->p_callbacker = this;
-    manager::g_work_manager->delay_run(async_item, false, GC_INTERVAL);
+}
+
+void object_pool_manager::stop_gc() {
+    m_gc_started = false;
+     
+    manager::g_work_manager->cancel_run(m_async);
+    printf("object pools stopped\n");
 }
 
 object_pool_manager::~object_pool_manager() {
-    m_gc_started = false;
+    if (m_gc_started) stop_gc();
+
+    KIRIN_DELETE_AND_SET_NULL(m_async);
+
     dec_ref();
 }
 

@@ -32,12 +32,17 @@ void timer_service::start() {
     m_thread.create(new job::task(&lambda::run, this));
 }
 
-timer_service::~timer_service() {
+void timer_service::stop() {
     m_running = false;
 
     if (m_efd != -1) ::close(m_efd);
     m_thread.join();
+    printf("timer service thread joined\n");
     m_timer_map.clear();
+}
+
+timer_service::~timer_service() {
+    if (m_running) stop();
 }
 
 void timer_service::run_timer() {

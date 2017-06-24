@@ -23,6 +23,7 @@ public:
     bool add_to_timer(uint64_t run_tick, job::item_base* p_item);
     bool remove_from_timer(job::item_base* p_item);
     void start();
+    void stop();
     virtual bool is_running();
 
 protected:

@@ -15,6 +15,7 @@ public:
     void do_register(object_pool* p_pool);
     void deregister(object_pool* pool);
     void start_gc();
+    void stop_gc();
     virtual void callback(async::async_work_item* item);
 
 private:
@@ -22,6 +23,7 @@ private:
 
 private:
     volatile bool m_gc_started;
+    async::async_work_item* m_async;
     std::list<object_pool*> m_pools;
 };
 

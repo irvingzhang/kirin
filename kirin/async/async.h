@@ -28,7 +28,7 @@ struct async_work_item: public job::work_item {
     explicit async_work_item(int action):
                                     work_item(),
                                     error(0),
-                                    action(0),
+                                    action(action),
                                     p_callbacker(NULL),
                                     n_run_tick(0) {
     }

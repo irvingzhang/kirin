@@ -31,7 +31,7 @@ work_manager::work_manager():
 }
 
 work_manager::~work_manager() {
-    this->stop(true);
+    if (is_running()) this->stop(true);
 }
 
 int work_manager::start(size_t workers, uint32_t timer_precision) {
@@ -51,12 +51,16 @@ int work_manager::start(size_t workers, uint32_t timer_precision) {
 }
 
 void work_manager::stop(bool wait_pool_stop) {
+    memory::g_object_pool_manager->stop_gc();
     if (wait_pool_stop) {
-        for (size_t index = 0; index < m_thread_pool.get_worker_count(); ++index) {
+        size_t workers = m_thread_pool.get_worker_count();
+        for (size_t index = 0; index < workers; ++index) {
             if (m_thread_pool.get_tid(index) == syscall(SYS_gettid)) return; /// do not work in pool threads
+        }
 
-            int num = 0;
-            while ((num = common::atomic_cmp_swap(&m_current_jobs, INT_MIN, 0)) != 0) {
+        int num = 0;
+        while ((num = common::atomic_cmp_swap(&m_current_jobs, INT_MIN, 0)) != 0) {
+            if (num == INT_MIN) {
                 return;
             }
             sleep(1);
@@ -66,6 +70,8 @@ void work_manager::stop(bool wait_pool_stop) {
     } else {
         ATOMIC_SET(&m_current_jobs, INT_MIN);
     }
+
+    timer_service::stop();
 }
 
 bool work_manager::is_running() {
