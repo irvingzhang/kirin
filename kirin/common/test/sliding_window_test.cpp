@@ -49,12 +49,9 @@ public:
 class window_test: public async::callbacker {
 public:
     window_test() {
-        callbacker = new empty_callbacker();
-        callbacker->add_ref();
     }
 
     ~window_test() {
-        callbacker->release();
     }
 
     bool init() {
@@ -99,12 +96,12 @@ private:
 
     static void on_empty(sliding_item* p_item, void* ptr) {
         static int counter = 0;
-        p_item->id = ++counter;
+        ++counter;
         std::cout << "on_empty, counter " << counter << std::endl;
         if (counter <= 30) {
             test_async_item* aitem = new test_async_item();        
             aitem->action = message::internal_action::KIRIN_IA_WRITE;
-            aitem->p_callbacker = ((window_test*)ptr)->callbacker;
+            aitem->p_callbacker = new empty_callbacker;
             aitem->p_ctx = ptr;
             aitem->p_item = p_item;
             int err = manager::g_work_manager->delay_run(aitem, false, 1000);
@@ -119,7 +116,6 @@ private:
 
 public:
     sliding_window<sliding_item> sw;
-    empty_callbacker* callbacker;
 };
 
 void empty_callbacker::callback(async::async_work_item* aitem) {

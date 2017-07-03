@@ -1,7 +1,6 @@
 #ifndef KIRIN_COMMON_SINGLETON_H
 #define KIRIN_COMMON_SINGLETON_H
 
-#include <stdlib.h>
 #include <pthread.h>
 #include <assert.h>
 #include "kirin/common/non_copyable.h"

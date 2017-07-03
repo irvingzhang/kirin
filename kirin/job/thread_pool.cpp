@@ -128,7 +128,7 @@ int thread_pool::get_tid(const size_t queue_index) const {
 }
 
 size_t thread_pool::get_processing_jobs(const int queue_index) const {
-    assert(queue_index >= -1 && queue_index < m_workers);
+    assert(queue_index >= -1 && queue_index < (int)m_workers);
 
     if (m_share_queue) return m_ctxs[0]->jobq->size();
 

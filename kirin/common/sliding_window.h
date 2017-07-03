@@ -73,7 +73,7 @@ sliding_window<ITEM>::~sliding_window() {
 template<typename ITEM>
 bool sliding_window<ITEM>::init(uint32_t window_len, ON_INIT_ITEM f_init, 
                            ON_SLOT_EMPTY f_empty, ON_ITEM_READY f_ready) {
-    assert(window_len != 0 && m_state == SW_NOT_READY && m_window_len == 0);
+    assert(window_len != 0 && m_state == SWS_NOT_READY && m_window_len == 0);
    
     m_window_len = window_len;
     m_item_ptr = new (std::nothrow) ITEM[m_window_len];

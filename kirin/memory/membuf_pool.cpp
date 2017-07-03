@@ -82,7 +82,7 @@ char* membuf_pool::alloc(uint32_t priority) {
             buf_handle* try_alloc_mem = m_freemem.front();
             m_freemem.pop_front();
             assert(try_alloc_mem != NULL && try_alloc_mem->ref_counter == 0
-                   && try_alloc_mem->p_handle_addr = try_alloc_mem);
+                   && try_alloc_mem->p_handle_addr == try_alloc_mem);
             ++try_alloc_mem->ref_counter;
             return try_alloc_mem->p_buff;
         } else {

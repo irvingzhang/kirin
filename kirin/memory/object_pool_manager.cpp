@@ -11,7 +11,7 @@ object_pool_manager* g_object_pool_manager =
 
 object_pool_manager::object_pool_manager() {
     m_async = new (std::nothrow) async::async_work_item;
-    assert(async_item != NULL);
+    assert(m_async != NULL);
     add_ref();
 }
 
