@@ -154,9 +154,12 @@ void sliding_window_test::test_all() {
     {
         window_test* p_ctx = new window_test();
         p_ctx->add_ref();
-        p_ctx->init();
-        p_ctx->start();
-       
+        async::async_work_item* pItem = new async::async_work_item;
+        pItem->action = message::internal_action::KIRIN_IA_INIT;
+        pItem->p_callbacker = p_ctx;
+        int err = manager::g_work_manager->append_job(pItem, false);
+        CPPUNIT_ASSERT_EQUAL((int)common::kirin_error::KIRIN_ERR_OK, err);
+
         sleep(15);
         p_ctx->sw.~sliding_window<sliding_item>();
         p_ctx->release();
